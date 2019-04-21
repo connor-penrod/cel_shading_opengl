@@ -2,6 +2,7 @@
 
 layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec3 vNormal;
+layout(location = 2) in vec3 vNormalAvg;
 
 // vertex shader
 out vec4 color;  //vertex shade
@@ -12,7 +13,7 @@ uniform mat4 ModelView;
 uniform mat4 Projection;
 uniform vec4 LightPosition;
 uniform float Shininess;
-
+uniform float Shatter_t;
 
 void main()
 {
@@ -33,9 +34,10 @@ void main()
     vec4  diffuse = Kd*DiffuseProduct;
     float Ks = pow( max(dot(N, H), 0.0), Shininess );
     vec4  specular = Ks * SpecularProduct;
-    if( dot(L, N) < 0.0 )  specular = vec4(0.0, 0.0, 0.0, 1.0); 
+    if( dot(L, N) < 0.0 )  
+		specular = vec4(0.0, 0.0, 0.0, 1.0); 
 	
-    gl_Position = Projection * ModelView * vec4(vPosition, 1.0);
+    gl_Position = Projection * ModelView * vec4(vPosition + N*sin(Shatter_t), 1.0);
 
     color = ambient + diffuse + specular;
 	//color = {0,1.0,0,0};

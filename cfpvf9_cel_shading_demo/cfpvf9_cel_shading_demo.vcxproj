@@ -130,10 +130,10 @@
     <None Include="freeglut.dll" />
     <None Include="f_flat.glsl" />
     <None Include="f_single.glsl" />
-    <None Include="f_smooth.glsl" />
+    <None Include="f_cel.glsl" />
     <None Include="v_flat.glsl" />
     <None Include="v_single.glsl" />
-    <None Include="v_smooth.glsl" />
+    <None Include="v_cel.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\..\glew\glew-2.1.0\include\GL\glew.h" />

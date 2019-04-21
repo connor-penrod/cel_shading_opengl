@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <math.h>
+#include <unordered_map>
 
 #include "InitShader.h"
 #include <glm/glm.hpp>
@@ -12,7 +13,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/normal.hpp>
 
-#define MESH_FILE "detailed_pig.obj"
+
+
+#define MESH_FILE "pig.obj"
 //#define STB_IMAGE_IMPLEMENTATION
 //#include "stb_image.h"
 
@@ -23,7 +26,7 @@ int g_gl_width = 640;
 int g_gl_height = 480;
 unsigned short key_track = 0;
 bool isPressed = false;
-bool celmode = false;
+bool celmode = true;
 double oldX, oldY;
 glm::mat4  model_view;
 glm::mat4  projection_model;
@@ -34,6 +37,8 @@ glm::vec3   normals[NumVertices];
 glm::vec4 curr_light_pos = glm::vec4(1.0, -2.0, 0.0, 1.0);
 std::vector<GLfloat*> vertices;
 std::vector<GLint> faces;
+float disappear_fac = 0.0f;
+char mesh_name[100];
 
 GLuint vao;
 GLuint shader_programme, shader_programme_smooth, curr_programme;
@@ -150,6 +155,102 @@ int readfile(std::string addrstr)
 		normals[count] = n.y; count++;
 		normals[count] = n.z; count++;
 	}
+	std::unordered_map<int, std::vector<glm::vec3>> normals_map;
+	for (int i = 0; i < faces.size(); i += 3)
+	{
+		int v1 = faces[i];
+		int v2 = faces[i + 1];
+		int v3 = faces[i + 2];
+		if (normals_map.find(v1) == normals_map.end())
+		{
+			std::vector<glm::vec3> vec;
+			vec.push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+			normals_map.insert({ v1, vec });
+		}
+		else
+		{
+			normals_map.at(v1).push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+		}
+		if (normals_map.find(v2) == normals_map.end())
+		{
+			std::vector<glm::vec3> vec;
+			vec.push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+			normals_map.insert({ v2, vec });
+		}
+		else
+		{
+			normals_map.at(v2).push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+		}
+		if (normals_map.find(v3) == normals_map.end())
+		{
+			std::vector<glm::vec3> vec;
+			vec.push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+			normals_map.insert({ v3, vec });
+		}
+		else
+		{
+			normals_map.at(v3).push_back(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
+		}
+	}
+
+	/*
+	printf("%f\n", normals[0]);
+	printf("%f\n", normals_map.at(1)[0][0]);
+	printf("%f\n", normals[9]);
+	printf("%f\n", normals_map.at(1)[1][0]);
+	getchar();
+	*/
+
+	//printf("%d\n", normals_map.at(1)[0][0]);
+	//getchar();
+	GLfloat *v_normals = (GLfloat*)malloc(faces.size() * 3 * sizeof(GLfloat));
+	int n_count = 0;
+	for (int i = 0; i < faces.size(); i += 3)
+	{
+		GLint e = faces[i];
+		GLint f = faces[i + 1];
+		GLint g = faces[i + 2];
+		glm::vec3 v1 = glm::vec3(vertices[e - 1][0], vertices[e - 1][1], vertices[e - 1][2]);
+		glm::vec3 v2 = glm::vec3(vertices[f - 1][0], vertices[f - 1][1], vertices[f - 1][2]);
+		glm::vec3 v3 = glm::vec3(vertices[g - 1][0], vertices[g - 1][1], vertices[g - 1][2]);
+
+		std::vector<glm::vec3> vec = normals_map.at(e - 1 + 1);
+		glm::vec3 n1(0, 0, 0);
+		for (int y = 0; y < vec.size(); y++)
+		{
+			//printf("Component %f %f %f\n", vec[y][0], vec[y][1], vec[y][2]);
+			n1 += vec[y];
+		}
+		n1 *= (1.f / (float)vec.size());
+
+		vec = normals_map.at(f - 1 + 1);
+		glm::vec3 n2(0, 0, 0);
+		for (int y = 0; y < vec.size(); y++)
+		{
+			//printf("Component %f %f %f\n", vec[y][0], vec[y][1], vec[y][2]);
+			n2 += vec[y];
+		}
+		n2 *= (1.f / (float)vec.size());
+
+		vec = normals_map.at(g - 1 + 1);
+		glm::vec3 n3(0, 0, 0);
+		for (int y = 0; y < vec.size(); y++)
+		{
+			//printf("Component %f %f %f\n", vec[y][0], vec[y][1], vec[y][2]);
+			n3 += vec[y];
+		}
+		n3 *= (1.f / (float)vec.size());
+
+		v_normals[n_count] = n1.x; n_count++;
+		v_normals[n_count] = n1.y; n_count++;
+		v_normals[n_count] = n1.z; n_count++; //1st 3
+		v_normals[n_count] = n2.x; n_count++;
+		v_normals[n_count] = n2.y; n_count++;
+		v_normals[n_count] = n2.z; n_count++; //2nd 3
+		v_normals[n_count] = n3.x; n_count++;
+		v_normals[n_count] = n3.y; n_count++;
+		v_normals[n_count] = n3.z; n_count++; //3rd 3
+	}
 	//glGenVertexArrays(1, &vao);
 	//glBindVertexArray(vao);
 	GLuint vbo;
@@ -166,10 +267,16 @@ int readfile(std::string addrstr)
 		GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+	GLuint v_normals_vbo;
+	glGenBuffers(1, &v_normals_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, v_normals_vbo);
+	glBufferData(GL_ARRAY_BUFFER, 3 * faces.size() * sizeof(GLfloat), v_normals,
+		GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	
-
+	glEnableVertexAttribArray(2);
 
 	return faces.size();
 }
@@ -231,7 +338,7 @@ void key_handler(GLFWwindow* window, int button, int scancode, int action, int s
 	if (button == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
 		printf("space\n");
-		if (key_track++ % 2 == 0)
+		if (key_track++ % 2 == 1)
 		{
 			curr_programme = shader_programme_smooth;
 			celmode = true;
@@ -262,6 +369,13 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 
 		glm::mat4 rot_view(1.0);
 		rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 0, 1));
+
+		if (strcmp(mesh_name, "man.obj") == 0 || strcmp(mesh_name, "head.obj") == 0)
+		{
+			rot_view = glm::mat4(1.0);
+			rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 1, 0));
+		}
+
 		model_view = model_view*rot_view;
 
 		glfwGetCursorPos(window, &oldX, &oldY);
@@ -274,6 +388,10 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 int main() {
+
+
+	printf("Mesh name: ");
+	scanf("%s", &mesh_name);
 
 	GLFWwindow *window = NULL;
 	const GLubyte *renderer;
@@ -318,18 +436,18 @@ int main() {
 	glClearColor(1, 1, 1, 1.0); // grey background to help spot mistakes
 	
 	int point_count = 0;
-	point_count = readfile(MESH_FILE);
+	point_count = readfile(mesh_name);
 
 	/*-------------------------------CREATE
 	* SHADERS-------------------------------*/
 	shader_programme =
 		InitShader("v_flat.glsl", "f_flat.glsl");
 	shader_programme_smooth =
-		InitShader("v_smooth.glsl", "f_smooth.glsl");
+		InitShader("v_cel.glsl", "f_cel.glsl");
 	GLuint outline_shader =
 		InitShader("v_single.glsl", "f_single.glsl");
 	//glUseProgram(shader_programme);
-	curr_programme = shader_programme;
+	curr_programme = shader_programme_smooth;
 
 	// Retrieve transformation uniform variable locations
 	ModelView = glGetUniformLocation(curr_programme, "ModelView");
@@ -340,6 +458,8 @@ int main() {
 	SpecularProduct = glGetUniformLocation(curr_programme, "SpecularProduct");
 	LightPosition = glGetUniformLocation(curr_programme, "LightPosition");
 	Shininess = glGetUniformLocation(curr_programme, "Shininess");
+	GLuint FeatureColor = glGetUniformLocation(curr_programme, "FeatureColor");
+	GLuint FeatureAngle = glGetUniformLocation(curr_programme, "FeatureAngle");
 
 	glfwSetMouseButtonCallback(window, mymouse);
 	glfwSetKeyCallback(window, key_handler);
@@ -358,6 +478,16 @@ int main() {
 	glm::vec3  up(0.0, 1.0, 0.0);
 
 	model_view = glm::lookAt(eye, at, up);
+
+	if (strcmp(mesh_name,"man.obj") == 0)
+	{
+		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
+	}
+	if (strcmp(mesh_name, "head.obj") == 0)
+	{
+		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
+	}
+	float t = 0;
 	while (!glfwWindowShouldClose(window)) {
 		if (!isPressed)
 		{
@@ -407,6 +537,10 @@ int main() {
 		glUniform4fv(SpecularProduct, 1, glm::value_ptr(specular0));
 		glUniform4fv(LightPosition, 1, glm::value_ptr(light0_pos));
 		glUniform1f(Shininess, 1.0f);
+		glUniform4fv(FeatureColor, 1, glm::value_ptr(glm::vec4(0, 0, 0, 1)));
+		glUniform1f(FeatureAngle, 0.25f);
+		glUniform1f(glGetUniformLocation(curr_programme, "Shatter_t"), 0);
+		t += 0.001f;
 		
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, point_count);

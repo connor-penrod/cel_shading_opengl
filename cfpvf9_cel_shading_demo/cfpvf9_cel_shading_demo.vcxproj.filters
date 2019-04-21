@@ -32,19 +32,19 @@
     <None Include="f_flat.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="f_smooth.glsl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="v_flat.glsl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="v_smooth.glsl">
       <Filter>Source Files</Filter>
     </None>
     <None Include="f_single.glsl">
       <Filter>Source Files</Filter>
     </None>
     <None Include="v_single.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="f_cel.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="v_cel.glsl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
