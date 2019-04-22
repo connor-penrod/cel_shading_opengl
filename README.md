@@ -1,4 +1,4 @@
-# cel_shading_opengl
+# OpenGL cel shading + outline + feature edge rendering
 Demonstration of an OpenGL implementation of cel shading with feature edge rendering.
 
 Uses Phong shading discretized into 3 shades of color. 
