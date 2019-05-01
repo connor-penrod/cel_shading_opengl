@@ -13,8 +13,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/normal.hpp>
 
-
-
 #define MESH_FILE "pig.obj"
 //#define STB_IMAGE_IMPLEMENTATION
 //#include "stb_image.h"
@@ -22,8 +20,9 @@
 //using namespace glm;
 //using namespace std;
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
-int g_gl_width = 640;
-int g_gl_height = 480;
+float ratio = 480.f/640.f;
+int g_gl_width = 1400;
+int g_gl_height = g_gl_width*ratio;
 unsigned short key_track = 0;
 bool isPressed = false;
 bool celmode = true;
@@ -66,8 +65,7 @@ float vrotate = 0;
 double newX, newY;
 
 GLfloat x_trans = 0, y_trans = 0, z_trans = 0;
-// Vertices of a unit cube centered at origin, sides aligned with axes
-
+// Vertices of a unit cube centered at origin, sides aligned with axe
 int readfile(std::string addrstr)
 {
 	FILE *file1, *file2;
@@ -376,6 +374,12 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 			rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 1, 0));
 		}
 
+		if (strcmp(mesh_name, "car.obj") == 0)
+		{
+			rot_view = glm::mat4(1.0);
+			rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 1, 0));
+		}
+
 		model_view = model_view*rot_view;
 
 		glfwGetCursorPos(window, &oldX, &oldY);
@@ -483,7 +487,7 @@ int main() {
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
 	}
-	if (strcmp(mesh_name, "head.obj") == 0)
+	if (strcmp(mesh_name, "head.obj") == 0 || strcmp(mesh_name, "car.obj") == 0)
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
 	}
@@ -538,8 +542,8 @@ int main() {
 		glUniform4fv(LightPosition, 1, glm::value_ptr(light0_pos));
 		glUniform1f(Shininess, 1.0f);
 		glUniform4fv(FeatureColor, 1, glm::value_ptr(glm::vec4(0, 0, 0, 1)));
-		glUniform1f(FeatureAngle, 0.25f);
-		glUniform1f(glGetUniformLocation(curr_programme, "Shatter_t"), 0);
+		glUniform1f(FeatureAngle, 0.15f);
+		glUniform1f(glGetUniformLocation(curr_programme, "Shatter_t"), t);
 		t += 0.001f;
 		
 		glBindVertexArray(vao);
