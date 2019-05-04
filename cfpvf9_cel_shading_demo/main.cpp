@@ -21,12 +21,14 @@
 //using namespace std;
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 float ratio = 480.f/640.f;
-int g_gl_width = 1400;
+int g_gl_width = 1400;//1400;
 int g_gl_height = g_gl_width*ratio;
 unsigned short key_track = 0;
 bool isPressed = false;
 bool celmode = true;
+bool showDerivatives = false;
 double oldX, oldY;
+float outline_offset = 0.f;
 glm::mat4  model_view;
 glm::mat4  projection_model;
 
@@ -47,6 +49,7 @@ GLuint DiffuseProduct;
 GLuint SpecularProduct;
 GLuint LightPosition;
 GLuint Shininess;
+int stage = 0;
 
 GLuint  ModelView, Projection;
 
@@ -63,6 +66,7 @@ double x_pre, y_pre, x, y;
 float hrotate = 0;
 float vrotate = 0;
 double newX, newY;
+float t = g_gl_width;
 
 GLfloat x_trans = 0, y_trans = 0, z_trans = 0;
 // Vertices of a unit cube centered at origin, sides aligned with axe
@@ -72,8 +76,7 @@ int readfile(std::string addrstr)
 	file1 = fopen(addrstr.c_str(), "r"); //read
 	if (file1 == NULL)
 	{
-		printf("File not found.\n");
-		getchar();
+		return -1;
 	}
 
 	float a, b, c, *arrayfloat, *arraycenter, *arrayx, *arrayy, *arrayz;
@@ -356,6 +359,44 @@ void key_handler(GLFWwindow* window, int button, int scancode, int action, int s
 		LightPosition = glGetUniformLocation(curr_programme, "LightPosition");
 		Shininess = glGetUniformLocation(curr_programme, "Shininess");
 	}
+	if (button == GLFW_KEY_D && action == GLFW_PRESS)
+	{
+		outline_offset += 0.01f;
+	}
+	if (button == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		outline_offset -= 0.01f;
+	}
+	if (button == GLFW_KEY_F && action == GLFW_PRESS)
+	{
+		if (key_track++ % 2 == 1)
+		{
+			showDerivatives = true;
+		}
+		else
+		{
+			showDerivatives = false;
+		}
+	}
+	if (button == GLFW_KEY_0 && action == GLFW_PRESS)
+	{
+		stage = 0;
+	}
+	if (button == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		stage = 1;
+		t = 0.5;
+	}
+	if (button == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		stage = 2;
+		t = 0.5;
+	}
+	if (button == GLFW_KEY_3 && action == GLFW_PRESS)
+	{
+		stage = 3;
+		t = 0.5;
+	}
 }
 static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -392,8 +433,6 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 int main() {
-
-
 	printf("Mesh name: ");
 	scanf("%s", &mesh_name);
 
@@ -430,7 +469,7 @@ int main() {
 	glewInit();
 	renderer = glGetString(GL_RENDERER); /* get renderer string */
 	version = glGetString(GL_VERSION);	 /* version as a string */
-	printf("Renderer: %s\n", renderer);
+	printf("Renderer: %s\n", renderer);  
 	printf("OpenGL version supported %s\n", version);
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS);		 // depth-testing interprets a smaller value as "closer"
@@ -438,9 +477,18 @@ int main() {
 	glCullFace(GL_BACK);		 // cull back face
 	glFrontFace(GL_CCW); // set counter-clock-wise vertex order to mean the front
 	glClearColor(1, 1, 1, 1.0); // grey background to help spot mistakes
-	
+
 	int point_count = 0;
 	point_count = readfile(mesh_name);
+
+	if (point_count == -1)
+	{
+		glfwTerminate();
+		printf("File not found.\n");
+		getchar();
+		getchar();
+		return -1;
+	}
 
 	/*-------------------------------CREATE
 	* SHADERS-------------------------------*/
@@ -491,7 +539,6 @@ int main() {
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
 	}
-	float t = 0;
 	while (!glfwWindowShouldClose(window)) {
 		if (!isPressed)
 		{
@@ -543,8 +590,16 @@ int main() {
 		glUniform1f(Shininess, 1.0f);
 		glUniform4fv(FeatureColor, 1, glm::value_ptr(glm::vec4(0, 0, 0, 1)));
 		glUniform1f(FeatureAngle, 0.15f);
-		glUniform1f(glGetUniformLocation(curr_programme, "Shatter_t"), t);
-		t += 0.001f;
+		glUniform1f(glGetUniformLocation(curr_programme, "ContourThreshold"), 0.2f);
+		glUniform1f(glGetUniformLocation(curr_programme, "Shatter_t"), 0);
+		glUniform1i(glGetUniformLocation(curr_programme, "ShowDerivatives"), (int)showDerivatives);
+		glUniform1f(glGetUniformLocation(curr_programme, "TransitionPosition"), t);
+		glUniform4fv(glGetUniformLocation(curr_programme, "viewport"), 1, glm::value_ptr(glm::vec4(0,0,g_gl_width, g_gl_height)));
+		glUniform1i(glGetUniformLocation(curr_programme, "Stage"), stage);
+		if (stage >= 1)
+		{
+			t -= 0.002f;
+		}
 		
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, point_count);
@@ -565,7 +620,7 @@ int main() {
 		//model_view = glm::scale(model_view, glm::vec3(1.1, 1.1, 1.1));
 		glUniformMatrix4fv(Mod, 1, GL_FALSE, glm::value_ptr(model_view));
 		glUniformMatrix4fv(Proj, 1, GL_FALSE, glm::value_ptr(projection_model));
-
+		glUniform1f(glGetUniformLocation(outline_shader, "offset"), outline_offset);
 		//glBindVertexArray(vao);
 		if(celmode)
 			glDrawArrays(GL_TRIANGLES, 0, point_count);

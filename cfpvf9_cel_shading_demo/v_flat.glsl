@@ -37,7 +37,7 @@ void main()
     if( dot(L, N) < 0.0 )  
 		specular = vec4(0.0, 0.0, 0.0, 1.0); 
 	
-    gl_Position = Projection * ModelView * vec4(vPosition + N*sin(Shatter_t), 1.0);
+    gl_Position = Projection * ModelView * vec4(vPosition + N*0.001*sin(Shatter_t), 1.0);
 
     color = ambient + diffuse + specular;
 	//color = {0,1.0,0,0};

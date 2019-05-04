@@ -61,6 +61,7 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 	    std::cerr << logMsg << std::endl;
 	    delete [] logMsg;
 		getchar();
+		getchar();
 	    exit( EXIT_FAILURE );
 	}
 

@@ -8,10 +8,13 @@ layout(location = 2) in vec3 vNormalAvg;
 out vec3 fN;
 out vec3 fE;
 out vec3 fL;
+//flat out int celshaded;
+
 
 uniform mat4 ModelView;
 uniform vec4 LightPosition;
 uniform mat4 Projection;
+uniform float TransitionPosition;
 
 void main()
 {
@@ -28,6 +31,15 @@ void main()
     //if( LightPosition.w != 0.0 ) {
 	//fL = LightPosition.xyz - vPosition.xyz;
     //}
+	/*
+	if(vPosition.x < TransitionPosition)
+	{
+		celshaded = 0;
+	}
+	else
+	{
+		celshaded = 1;
+	}*/
 
     gl_Position = Projection*ModelView*vec4(vPosition,1.0);
 }
