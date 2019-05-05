@@ -19,6 +19,7 @@
 
 //using namespace glm;
 //using namespace std;
+GLuint vbo, normals_vbo, v_normals_vbo;
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 float ratio = 480.f/640.f;
 int g_gl_width = 1400;//1400;
@@ -29,15 +30,15 @@ bool celmode = true;
 bool showDerivatives = false;
 double oldX, oldY;
 float outline_offset = 0.f;
+int point_count = 0;
 glm::mat4  model_view;
 glm::mat4  projection_model;
 
-glm::vec4 points[NumVertices];
+//glm::vec4 points[NumVertices];
 glm::vec2 texcoords[NumVertices];
-glm::vec3   normals[NumVertices];
+//glm::vec3   normals[NumVertices];
 glm::vec4 curr_light_pos = glm::vec4(1.0, -2.0, 0.0, 1.0);
-std::vector<GLfloat*> vertices;
-std::vector<GLint> faces;
+
 float disappear_fac = 0.0f;
 char mesh_name[100];
 
@@ -70,7 +71,7 @@ float t = g_gl_width;
 
 GLfloat x_trans = 0, y_trans = 0, z_trans = 0;
 // Vertices of a unit cube centered at origin, sides aligned with axe
-int readfile(std::string addrstr)
+int readfile(std::string addrstr, bool remake)
 {
 	FILE *file1, *file2;
 	file1 = fopen(addrstr.c_str(), "r"); //read
@@ -86,6 +87,9 @@ int readfile(std::string addrstr)
 
 	char v;
 	int count = 0;
+
+	std::vector<GLint> faces;
+	std::vector<GLfloat*> vertices;
 
 	while (!feof(file1))
 	{
@@ -118,6 +122,8 @@ int readfile(std::string addrstr)
 		}
 	}
 	fclose(file1);
+
+	printf("SIZE: %d\n", faces.size());
 
 	xcenter = (max_x + min_x) / 2;
 	ycenter = (max_y + min_y) / 2;
@@ -254,22 +260,28 @@ int readfile(std::string addrstr)
 	}
 	//glGenVertexArrays(1, &vao);
 	//glBindVertexArray(vao);
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
+ 
+	if(!remake)
+	{
+		glGenBuffers(1, &vbo);
+		glGenBuffers(1, &normals_vbo);
+		glGenBuffers(1, &v_normals_vbo);
+	}
+	
+	
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 3 * faces.size() * sizeof(GLfloat), points,
-		GL_STATIC_DRAW);
+		GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	GLuint normals_vbo;
-	glGenBuffers(1, &normals_vbo);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
 	glBufferData(GL_ARRAY_BUFFER, 3 * faces.size() * sizeof(GLfloat), normals,
 		GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	GLuint v_normals_vbo;
-	glGenBuffers(1, &v_normals_vbo);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, v_normals_vbo);
 	glBufferData(GL_ARRAY_BUFFER, 3 * faces.size() * sizeof(GLfloat), v_normals,
 		GL_STATIC_DRAW);
@@ -397,6 +409,20 @@ void key_handler(GLFWwindow* window, int button, int scancode, int action, int s
 		stage = 3;
 		t = 0.5;
 	}
+	if (button == GLFW_KEY_H && action == GLFW_PRESS)
+	{
+		point_count = readfile("head.obj", true);
+		if(strcmp(mesh_name, "pig.obj") == 0)
+			model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
+		strcpy(mesh_name, "head.obj");
+	}
+	if (button == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		point_count = readfile("pig.obj", true);
+		if (strcmp(mesh_name, "head.obj") == 0)
+			model_view = glm::rotate(model_view, -3.14f / 2, glm::vec3(1, 0, 0));
+		strcpy(mesh_name, "pig.obj");
+	}
 }
 static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -409,7 +435,7 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 		glm::mat4 rot_view(1.0);
 		rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 0, 1));
 
-		if (strcmp(mesh_name, "man.obj") == 0 || strcmp(mesh_name, "head.obj") == 0)
+		if (strcmp(mesh_name, "man.obj") == 0 || strcmp(mesh_name, "head.obj") == 0 || strcmp(mesh_name, "abrams.obj") == 0)
 		{
 			rot_view = glm::mat4(1.0);
 			rot_view = glm::rotate(rot_view, hrotate, glm::vec3(0, 1, 0));
@@ -478,8 +504,7 @@ int main() {
 	glFrontFace(GL_CCW); // set counter-clock-wise vertex order to mean the front
 	glClearColor(1, 1, 1, 1.0); // grey background to help spot mistakes
 
-	int point_count = 0;
-	point_count = readfile(mesh_name);
+	point_count = readfile(mesh_name, false);
 
 	if (point_count == -1)
 	{
@@ -531,9 +556,10 @@ int main() {
 
 	model_view = glm::lookAt(eye, at, up);
 
-	if (strcmp(mesh_name,"man.obj") == 0)
+	if (strcmp(mesh_name,"man.obj") == 0 || strcmp(mesh_name, "abrams.obj") == 0)
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
+		model_view = glm::scale(model_view, glm::vec3(1.75, 1.75, 1.75));
 	}
 	if (strcmp(mesh_name, "head.obj") == 0 || strcmp(mesh_name, "car.obj") == 0)
 	{
