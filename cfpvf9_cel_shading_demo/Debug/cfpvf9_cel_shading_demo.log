@@ -1,21 +1,21 @@
 ﻿  main.cpp
 c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(70): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(141): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(147): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(166): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(215): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(226): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(235): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(244): warning C4018: '<': signed/unsigned mismatch
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(83): warning C4101: 'arrayz': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(83): warning C4101: 'arrayx': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(76): warning C4101: 'file2': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(83): warning C4101: 'arrayy': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(83): warning C4101: 'arraycenter': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(303): warning C4101: 'posZ': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(303): warning C4101: 'posY': unreferenced local variable
-c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(303): warning C4101: 'posX': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(71): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(142): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(148): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(167): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(216): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(227): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(236): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(245): warning C4018: '<': signed/unsigned mismatch
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(84): warning C4101: 'arrayz': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(84): warning C4101: 'arrayx': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(77): warning C4101: 'file2': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(84): warning C4101: 'arrayy': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(84): warning C4101: 'arraycenter': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(304): warning C4101: 'posZ': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(304): warning C4101: 'posY': unreferenced local variable
+c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(304): warning C4101: 'posX': unreferenced local variable
 c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(432): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
 c:\users\conno\documents\visual studio 2015\projects\cfpvf9_cel_shading_demo\cfpvf9_cel_shading_demo\main.cpp(433): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
   cfpvf9_cel_shading_demo.vcxproj -> C:\Users\Conno\Documents\Visual Studio 2015\Projects\cfpvf9_cel_shading_demo\Debug\cfpvf9_cel_shading_demo.exe

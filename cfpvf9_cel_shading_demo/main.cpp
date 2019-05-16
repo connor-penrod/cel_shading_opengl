@@ -31,6 +31,7 @@ bool showDerivatives = false;
 double oldX, oldY;
 float outline_offset = 0.f;
 int point_count = 0;
+int time = 0;
 glm::mat4  model_view;
 glm::mat4  projection_model;
 
@@ -350,7 +351,6 @@ void key_handler(GLFWwindow* window, int button, int scancode, int action, int s
 {
 	if (button == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		printf("space\n");
 		if (key_track++ % 2 == 1)
 		{
 			curr_programme = shader_programme_smooth;
@@ -559,12 +559,15 @@ int main() {
 	if (strcmp(mesh_name,"man.obj") == 0 || strcmp(mesh_name, "abrams.obj") == 0)
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
-		model_view = glm::scale(model_view, glm::vec3(1.75, 1.75, 1.75));
+		model_view = glm::scale(model_view, glm::vec3(1.5, 1.5, 1.5));
 	}
 	if (strcmp(mesh_name, "head.obj") == 0 || strcmp(mesh_name, "car.obj") == 0)
 	{
 		model_view = glm::rotate(model_view, 3.14f / 2, glm::vec3(1, 0, 0));
 	}
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	while (!glfwWindowShouldClose(window)) {
 		if (!isPressed)
 		{
@@ -604,10 +607,18 @@ int main() {
 		glUniformMatrix4fv(Projection, 1, GL_FALSE, glm::value_ptr(projection_model));
 
 		//LIGHTING
+		/*
 		glm::vec4 diffuse0 = glm::vec4(0, 1, 0, 1);
 		glm::vec4 ambient0 = glm::vec4(1, 0, 0, 1.0);
 		glm::vec4 specular0 = glm::vec4(0.2, 0.2, 0.2, 1.0);
 		glm::vec4 light0_pos = curr_light_pos;
+		*/
+		
+		glm::vec4 diffuse0 = glm::vec4(0.3, 0.3, 0.3, 1);
+		glm::vec4 ambient0 = glm::vec4(0.4, 0.4, 1, 1.0);
+		glm::vec4 specular0 = glm::vec4(0.2, 0.2, 0.2, 1.0);
+		glm::vec4 light0_pos = curr_light_pos;
+		
 
 		glUniform4fv(DiffuseProduct, 1, glm::value_ptr(diffuse0));
 		glUniform4fv(AmbientProduct, 1, glm::value_ptr(ambient0));
@@ -622,10 +633,12 @@ int main() {
 		glUniform1f(glGetUniformLocation(curr_programme, "TransitionPosition"), t);
 		glUniform4fv(glGetUniformLocation(curr_programme, "viewport"), 1, glm::value_ptr(glm::vec4(0,0,g_gl_width, g_gl_height)));
 		glUniform1i(glGetUniformLocation(curr_programme, "Stage"), stage);
+		glUniform1i(glGetUniformLocation(curr_programme, "Time"), time);
 		if (stage >= 1)
 		{
 			t -= 0.002f;
 		}
+		time += 1;
 		
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, point_count);

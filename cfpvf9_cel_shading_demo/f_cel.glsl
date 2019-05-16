@@ -64,6 +64,7 @@ void main()
 	}
 	void Stage1()
 	{
+		specular = 0;
 		if(Kd > 0.3)
 		{
 			diffuse = DiffuseProduct;
@@ -80,6 +81,7 @@ void main()
 	}
 	void Stage2()
 	{
+		specular = 0;
 		if(dot(E, N) < FeatureAngle)
 		{
 			gl_FragColor = FeatureColor;
@@ -87,6 +89,7 @@ void main()
 	}
 	void Stage3()
 	{
+		specular = 0;
 		if(gradient > ContourThreshold)
 		{
 			gl_FragColor = vec4(0,0,0,1);
@@ -96,6 +99,7 @@ void main()
 
 	if(Stage >= 3)
 	{
+		specular = vec4(0,0,0,0);
 		if(change==1)
 		{
 			if(gradient > ContourThreshold)
@@ -152,6 +156,7 @@ void main()
 	}
 	else if(Stage >= 2)
 	{
+		specular = vec4(0,0,0,0);
 		if(change==1)
 		{
 			if(dot(E, N) < FeatureAngle)
@@ -196,6 +201,7 @@ void main()
 	{
 		if(change==1)
 		{
+			specular = vec4(0,0,0,0);
 			if(Kd > 0.3)
 			{
 				diffuse = DiffuseProduct;
@@ -212,6 +218,7 @@ void main()
 		}
 		else
 		{
+			specular = Ks*SpecularProduct;
 			diffuse = DiffuseProduct*Kd; 
 			gl_FragColor = ambient + diffuse + specular;
 		}
@@ -229,8 +236,7 @@ void main()
 	}*/
 
     // discard the specular highlight if the light's behind the vertex
-    if( dot(L, N) < 0.0 ) 
-	specular = vec4(0.0, 0.0, 0.0, 1.0);
+
 
 	//gl_FragColor = ambient + diffuse + specular;
 	
